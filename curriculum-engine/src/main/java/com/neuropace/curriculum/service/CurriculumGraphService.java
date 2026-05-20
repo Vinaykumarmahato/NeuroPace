@@ -3,6 +3,7 @@ package com.neuropace.curriculum.service;
 import com.neuropace.curriculum.entity.Prerequisite;
 import com.neuropace.curriculum.entity.Subject;
 import com.neuropace.curriculum.graph.CurriculumGraph;
+import com.neuropace.curriculum.graph.CurriculumGraphWithWeights;
 import com.neuropace.curriculum.repository.CurriculumRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,11 @@ public class CurriculumGraphService {
 
     private final CurriculumRepository curriculumRepository;
     private CurriculumGraph curriculumGraph;
+    private CurriculumGraphWithWeights weightedGraph;
 
     /**
-     * Initializes the curriculum graph from the database and validates acyclicity.
-     * Throws CircularCurriculumException if a cycle is found.
+     * Initializes both the topological and weighted curriculum graphs from the database.
+     * Throws CircularCurriculumException if a cycle is detected.
      */
     @PostConstruct
     public void init() {
@@ -36,7 +38,8 @@ public class CurriculumGraphService {
         List<Prerequisite> prerequisites = curriculumRepository.findAllPrerequisites();
 
         this.curriculumGraph = new CurriculumGraph(subjects, prerequisites);
-        
+        this.weightedGraph   = new CurriculumGraphWithWeights(subjects, prerequisites);
+
         log.info("Curriculum graph loaded: V={} vertices, E={} edges, order={}",
                 subjects.size(),
                 prerequisites.size(),
@@ -75,5 +78,13 @@ public class CurriculumGraphService {
      */
     public boolean isValidDAG() {
         return curriculumGraph.isValidDAG();
+    }
+
+    /**
+     * Returns the weighted curriculum graph used for Dijkstra routing.
+     * @return CurriculumGraphWithWeights instance.
+     */
+    public CurriculumGraphWithWeights getWeightedGraph() {
+        return weightedGraph;
     }
 }

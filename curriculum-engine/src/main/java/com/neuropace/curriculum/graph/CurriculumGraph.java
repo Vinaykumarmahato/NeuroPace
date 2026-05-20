@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
  * Immutable, thread-safe representation of the Curriculum Dependency Graph.
  * Validates acyclicity using Kahn's algorithm and extracts cycle info using DFS.
  */
-public final class CurriculumGraph {
+public class CurriculumGraph {
 
     public static final int MAX_SUBJECTS = 10000;
     public static final long CYCLE_CHECK_TIMEOUT_MS = 5000;
 
-    private final Map<Long, Subject> subjectsMap;
-    private final Map<Long, List<Long>> adjacencyList;
-    private final Map<Long, List<Long>> inverseAdjacencyList;
-    private final List<Subject> topologicalOrder;
-    private final boolean validDAG;
+    protected final Map<Long, Subject> subjectsMap;
+    protected final Map<Long, List<Long>> adjacencyList;
+    protected final Map<Long, List<Long>> inverseAdjacencyList;
+    protected final List<Subject> topologicalOrder;
+    protected final boolean validDAG;
 
     /**
      * Constructs the curriculum graph and checks for cycles.
